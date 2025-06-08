@@ -1,7 +1,7 @@
 (** Borrowed from Pierce's "Software Foundations" *)
 
-Require Import Arith Arith.EqNat.
-Require Import Lia.
+From Stdlib Require Import Arith Arith.EqNat.
+From Stdlib Require Import Lia.
 
 Inductive id : Type :=
   Id : nat -> id.
@@ -64,30 +64,52 @@ Lemma le_gt_id_dec : forall id1 id2 : id, {id1 i<= id2} + {id1 i> id2}.
 Proof. prove_with le_gt_dec. Qed.
 
 Lemma id_eq_dec : forall id1 id2 : id, {id1 = id2} + {id1 <> id2}.
-Proof. admit. Admitted.
+Proof. prove_with Nat.eq_dec. Qed. 
 
 Lemma eq_id : forall (T:Type) x (p q:T), (if id_eq_dec x x then p else q) = p.
-Proof. admit. Admitted.
+Proof.
+  intros. destruct (id_eq_dec x x). reflexivity. contradiction.
+Qed.
 
 Lemma neq_id : forall (T:Type) x y (p q:T), x <> y -> (if id_eq_dec x y then p else q) = q.
-Proof. admit. Admitted.
+Proof.
+  intros. destruct (id_eq_dec x y). contradiction. reflexivity.
+Qed.
 
 Lemma lt_gt_id_false : forall id1 id2 : id,
     id1 i> id2 -> id2 i> id1 -> False.
-Proof. admit. Admitted.
+Proof.
+  intros id1 id2 [n m H1] H2.
+  inversion H2. lia.
+Qed.
 
 Lemma le_gt_id_false : forall id1 id2 : id,
     id2 i<= id1 -> id2 i> id1 -> False.
-Proof. admit. Admitted.
+Proof.
+  intros id1 id2 [n m H1] H2.
+  inversion H2. lia.
+Qed.
 
 Lemma le_lt_eq_id_dec : forall id1 id2 : id, 
     id1 i<= id2 -> {id1 = id2} + {id2 i> id1}.
-Proof. admit. Admitted.
+Proof.
+  intros id1 id2 H. remember (gt_eq_gt_id_dec id1 id2).
+  inversion s. inversion H0. apply (lt_gt_id_false id1 id2) in H1. contradiction.
+  inversion H1. inversion H. subst. inversion H6. inversion H7. lia.
+  auto. auto.
+Qed.
 
 Lemma neq_lt_gt_id_dec : forall id1 id2 : id,
     id1 <> id2 -> {id1 i> id2} + {id2 i> id1}.
-Proof. admit. Admitted.
+Proof.
+  intros id1 id2 H. unfold not in H. remember (le_gt_id_dec id1 id2).
+  inversion s. apply le_lt_eq_id_dec in H0. inversion H0. contradiction.
+  auto. auto.
+Qed.
     
 Lemma eq_gt_id_false : forall id1 id2 : id,
     id1 = id2 -> id1 i> id2 -> False.
-Proof. admit. Admitted.
+Proof.
+  intros [n] [m] H1 H2.
+  inversion H1. inversion H2. lia.
+Qed.
