@@ -727,7 +727,7 @@ Module Renaming.
     auto.
   Qed.
 
-Lemma state_renamning_invariance (x : id) (st : state Z) (z : Z) (r : renaming) :
+Lemma state_renaming_invariance (x : id) (st : state Z) (z : Z) (r : renaming) :
     st / x => z <-> (rename_state r st) / (rename_id r x) => z.
   Proof.
     split. intros.
@@ -753,10 +753,10 @@ Lemma state_renamning_invariance (x : id) (st : state Z) (z : Z) (r : renaming) 
     - induction H.
       all: try (econstructor; [ apply IHeval1 | apply IHeval2 | .. ]; repeat assumption).
       + constructor.
-      + constructor. apply state_renamning_invariance. apply VAR.
+      + constructor. apply state_renaming_invariance. apply VAR.
     - generalize dependent z. induction e; intros.
       + inversion H; auto.
-      + inversion H; constructor. eapply state_renamning_invariance. apply VAR.
+      + inversion H; constructor. eapply state_renaming_invariance. apply VAR.
       + inversion H; try (econstructor; [ apply IHe1 | apply IHe2 | ..]; eauto).
   Qed.
 
