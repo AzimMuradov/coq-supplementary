@@ -551,11 +551,27 @@ Module SmallStep.
 
   #[export] Hint Resolve ss_eval_binop : core.
   
+ Lemma ss_eval_equiv_helper (s   : state Z)
+                            (e e': expr)
+                            (z : Z)
+                            (HST: (s) |- e --> e')
+                            (HEX: [|e'|] s => z) : [|e|] s => (z).
+  Proof.
+    dependent induction e;
+    inversion HST; subst;
+    inversion HEX; subst;
+    eauto.
+  Qed.
+
   Lemma ss_eval_equiv (e : expr)
                       (s : state Z)
                       (z : Z) : [| e |] s => z <-> (s |- e -->> (Nat z)).
-  Proof. admit. Admitted.
-  
+   Proof.
+   constructor; intro; dependent induction H; eauto.
+   specialize (IHss_eval z). assert (Nat z = Nat z). auto. apply IHss_eval in H0.
+   specialize (ss_eval_equiv_helper s e e' z HStep H0). eauto.
+  Qed.
+
 End SmallStep.
 
 Module StaticSemantics.
